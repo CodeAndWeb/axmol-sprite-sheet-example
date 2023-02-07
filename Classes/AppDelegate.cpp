@@ -34,8 +34,8 @@
 
 USING_NS_AX;
 
-static ax::Size designResolutionSize = ax::Size(1280, 720);
-static ax::Size smallResolutionSize  = ax::Size(480, 320);
+static ax::Size designResolutionSize = ax::Size(2048, 1536);
+static ax::Size smallResolutionSize  = ax::Size(512, 384);
 static ax::Size mediumResolutionSize = ax::Size(1024, 768);
 static ax::Size largeResolutionSize  = ax::Size(2048, 1536);
 
@@ -90,18 +90,21 @@ bool AppDelegate::applicationDidFinishLaunching()
     // if the frame's height is larger than the height of medium size.
     if (frameSize.height > mediumResolutionSize.height)
     {
+        FileUtils::getInstance()->setSearchPaths({ "res/HDR" });
         director->setContentScaleFactor(MIN(largeResolutionSize.height / designResolutionSize.height,
                                             largeResolutionSize.width / designResolutionSize.width));
     }
     // if the frame's height is larger than the height of small size.
     else if (frameSize.height > smallResolutionSize.height)
     {
+        FileUtils::getInstance()->setSearchPaths({ "res/HD" });
         director->setContentScaleFactor(MIN(mediumResolutionSize.height / designResolutionSize.height,
                                             mediumResolutionSize.width / designResolutionSize.width));
     }
     // if the frame's height is smaller than the height of medium size.
     else
     {
+        FileUtils::getInstance()->setSearchPaths({ "res/SD" });
         director->setContentScaleFactor(MIN(smallResolutionSize.height / designResolutionSize.height,
                                             smallResolutionSize.width / designResolutionSize.width));
     }
