@@ -78,44 +78,25 @@ bool HelloWorld::init()
     /////////////////////////////
     // 3. add your codes below...
 
-    // add a label shows "Hello World"
-    // create and initialize a label
+    SpriteFrameCache::getInstance()->addSpriteFramesWithFile("cityscene.plist");
 
-    auto label = Label::createWithTTF("Hello World", "fonts/Marker Felt.ttf", 24);
-    if (label == nullptr)
-    {
-        problemLoading("'fonts/Marker Felt.ttf'");
-    }
-    else
-    {
-        // position the label on the center of the screen
-        label->setPosition(
-            Vec2(origin.x + visibleSize.width / 2, origin.y + visibleSize.height - label->getContentSize().height));
+    auto background = Sprite::createWithSpriteFrameName("background.png");
+    background->setPosition(origin.x + visibleSize.x / 2,origin.y + visibleSize.y/2);
+    addChild(background);
+    
+    auto frames = getAnimation("capguy/walk/%04d.png", 8);
+    auto sprite = Sprite::createWithSpriteFrame(frames.front());
+    background->addChild(sprite);
+    sprite->setPosition(100,620);
 
-        // add the label as a child to this layer
-        this->addChild(label, 1);
-    }
-
-    // add "HelloWorld" splash screen"
-    auto sprite = Sprite::create("HelloWorld.png"sv);
-    if (sprite == nullptr)
-    {
-        problemLoading("'HelloWorld.png'");
-    }
-    else
-    {
-        // position the sprite on the center of the screen
-        sprite->setPosition(Vec2(visibleSize.width / 2 + origin.x, visibleSize.height / 2 + origin.y));
-
-        // add the sprite as a child to this layer
-        this->addChild(sprite, 0);
-        auto drawNode = DrawNode::create();
-        drawNode->setPosition(Vec2(0, 0));
-        addChild(drawNode);
-
-        drawNode->drawRect(safeArea.origin, safeArea.origin + safeArea.size, Color4F::BLUE);
-    }
-
+    auto animation = Animation::createWithSpriteFrames(frames, 1.0f/12);
+    sprite->runAction(RepeatForever::create(Animate::create(animation)));
+    
+    auto movement = MoveTo::create(10, Vec2(2148,620));
+    auto resetPosition = MoveTo::create(0, Vec2(-150,620));
+    auto sequence = Sequence::create(movement, resetPosition, NULL);
+    sprite->runAction(RepeatForever::create(sequence));
+    
     // scheduleUpdate() is required to ensure update(float) is called on every loop
     scheduleUpdate();
 
@@ -182,4 +163,17 @@ void HelloWorld::menuCloseCallback(Ref* sender)
 
     // EventCustom customEndEvent("game_scene_close_event");
     //_eventDispatcher->dispatchEvent(&customEndEvent);
+}
+
+Vector<SpriteFrame*> HelloWorld::getAnimation(const char *format, int count)
+{
+    auto spritecache = SpriteFrameCache::getInstance();
+    Vector<SpriteFrame*> animFrames;
+    char str[100];
+    for(int i = 1; i <= count; i++)
+    {
+        snprintf(str, sizeof(str), format, i);
+        animFrames.pushBack(spritecache->getSpriteFrameByName(str));
+    }
+    return animFrames;
 }
