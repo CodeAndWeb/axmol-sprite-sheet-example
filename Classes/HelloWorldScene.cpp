@@ -27,6 +27,21 @@
 
 USING_NS_AX;
 
+
+static Vector<SpriteFrame*> getAnimation(const char *format, int count)
+{
+    auto spritecache = SpriteFrameCache::getInstance();
+    Vector<SpriteFrame*> animFrames;
+    char str[100];
+    for(int i = 1; i <= count; i++)
+    {
+        snprintf(str, sizeof(str), format, i);
+        animFrames.pushBack(spritecache->getSpriteFrameByName(str));
+    }
+    return animFrames;
+}
+
+
 // Print useful error message instead of segfaulting when files are not there.
 static void problemLoading(const char* filename)
 {
@@ -83,7 +98,7 @@ bool HelloWorld::init()
     auto background = Sprite::createWithSpriteFrameName("background.png");
     background->setPosition(origin.x + visibleSize.x / 2,origin.y + visibleSize.y/2);
     addChild(background);
-    
+
     auto frames = getAnimation("capguy/walk/%04d.png", 8);
     auto sprite = Sprite::createWithSpriteFrame(frames.front());
     background->addChild(sprite);
@@ -91,7 +106,7 @@ bool HelloWorld::init()
 
     auto animation = Animation::createWithSpriteFrames(frames, 1.0f/12);
     sprite->runAction(RepeatForever::create(Animate::create(animation)));
-    
+
     auto movement = MoveTo::create(10, Vec2(2148,620));
     auto resetPosition = MoveTo::create(0, Vec2(-150,620));
     auto sequence = Sequence::create(movement, resetPosition, NULL);
@@ -163,17 +178,4 @@ void HelloWorld::menuCloseCallback(Ref* sender)
 
     // EventCustom customEndEvent("game_scene_close_event");
     //_eventDispatcher->dispatchEvent(&customEndEvent);
-}
-
-Vector<SpriteFrame*> HelloWorld::getAnimation(const char *format, int count)
-{
-    auto spritecache = SpriteFrameCache::getInstance();
-    Vector<SpriteFrame*> animFrames;
-    char str[100];
-    for(int i = 1; i <= count; i++)
-    {
-        snprintf(str, sizeof(str), format, i);
-        animFrames.pushBack(spritecache->getSpriteFrameByName(str));
-    }
-    return animFrames;
 }

@@ -50,8 +50,6 @@ public:
 
 private:
     ExampleGameState _gameState = ExampleGameState::init;
-    
-    ax::Vector<ax::SpriteFrame *> getAnimation(const char *format, int count);
 };
 
 #endif  // __HELLOWORLD_SCENE_H__
